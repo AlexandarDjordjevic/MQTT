@@ -16,7 +16,23 @@ namespace MQTT{
 class Packet{
 public:
     //Types
-    enum 
+    enum ControlType{
+        Reserved = 0,
+        CONNECT,
+        CONNACK,
+        PUBLISH,
+        PUBACK,
+        PUBREC,
+        PUBREL,
+        PUBCOMP,
+        SUBSCRIBE,
+        SUBACK,
+        UNSUBSCRIBE,
+        UNSUBACK,
+        PINGREQ,
+        PINGRESP,
+        DISCONNECT
+    };
 
     /**
      * @brief Construct a new Packet object
