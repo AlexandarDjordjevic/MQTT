@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.8)
 
-set(this MQTT)
+set(this mqtt)
 
 set(CMAKE_CXX_STANDARD 11)
 
@@ -20,4 +20,4 @@ set_target_properties(${this} PROPERTIES
 
 target_include_directories(${this} PUBLIC include)
 
-#add_subdirectory(tests)
+add_subdirectory(tests)
