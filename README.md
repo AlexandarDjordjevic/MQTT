@@ -1,6 +1,6 @@
 # MQTT
 
-This library iplements encodind and decoding MQTT protocol messages.
+This library iplements encodind and decoding MQTT V3.1 protocol messages.
 
 
 MQTT(Message Queuing Telemetry Transport) is an open and lightweight, publish-subscribe network protocol that transports messages between devices. The protocol usually runs over TCP/IP; however, any network protocol that provides ordered, lossless, bi-directional connections can support MQTT. It is designed for connections with remote locations where a "small code footprint" is required or the network bandwidth is limited.

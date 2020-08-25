@@ -10,11 +10,20 @@
  */
 
 #pragma once
+#include <memory>
 
 namespace MQTT{
     class MQTT{
     public:
         MQTT();
+        ~MQTT();
 
+        MQTT(const MQTT &) = delete;
+        MQTT &operator=(const MQTT &) = delete;
+        MQTT(MQTT &&) = delete;
+        MQTT &operator=(const MQTT &&) = delete;
+    private:
+        struct impl;
+        std::unique_ptr<impl> pimpl;
     };
 }

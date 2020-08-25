@@ -2,10 +2,21 @@
 
 namespace MQTT{
     /**
+     * @brief Pimpl implementatio
+     * 
+     */
+    struct MQTT::impl
+    {
+        
+    };
+    
+    /**
      * @brief Construct a new MQTT::MQTT object
      * 
      */
-    MQTT::MQTT(){
+    MQTT::MQTT()
+        : pimpl(new MQTT::impl())
+    {
 
     }
 }
