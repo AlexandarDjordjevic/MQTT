@@ -13,17 +13,26 @@
 #include <memory>
 
 namespace MQTT{
-    class Parser{
-    public:
-        Parser();
-        ~Parser();
+class Parser{
+public:
+    /**
+     * @brief Construct a new Parser object
+     * 
+     */
+    Parser();
+    /**
+     * @brief Destroy the Parser object
+     * 
+     */
+    ~Parser();
 
-        Parser(const Parser &) = delete;
-        Parser &operator=(const Parser &) = delete;
-        Parser(Parser &&) = delete;
-        Parser &operator=(const Parser &&) = delete;
-    private:
-        struct impl;
-        std::unique_ptr<impl> pimpl;
-    };
+    Parser(const Parser &) = delete;
+    Parser &operator=(const Parser &) = delete;
+    Parser(Parser &&) = delete;
+    Parser &operator=(const Parser &&) = delete;
+    
+private:
+    struct impl;
+    std::unique_ptr<impl> pimpl;
+};
 }
