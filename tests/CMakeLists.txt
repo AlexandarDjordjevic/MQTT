@@ -18,7 +18,7 @@ add_executable(${this} ${source})
 target_link_libraries(${this} 
                         ${GTEST_BOTH_LIBRARIES}
                         pthread
-                        
+                        mqtt
                      )
 
 add_test(

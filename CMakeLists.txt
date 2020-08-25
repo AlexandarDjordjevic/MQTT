@@ -5,11 +5,13 @@ set(this mqtt)
 set(CMAKE_CXX_STANDARD 11)
 
 set(include
-        include/MQTT/MQTT.hpp
+        include/MQTT/Parser.hpp
+        include/MQTT/Message.hpp
     )
 
 set(source
-        source/MQTT.cpp
+        source/Parser.cpp
+        source/Message.cpp
     )
 
 add_library(${this} STATIC ${source})

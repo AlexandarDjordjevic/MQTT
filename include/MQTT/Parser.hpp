@@ -1,5 +1,5 @@
 /**
- * @file MQTT.hpp
+ * @file Parser.hpp
  * @author Aleksandar Djordjevic
  * @brief 
  * @version 0.1
@@ -13,15 +13,15 @@
 #include <memory>
 
 namespace MQTT{
-    class MQTT{
+    class Parser{
     public:
-        MQTT();
-        ~MQTT();
+        Parser();
+        ~Parser();
 
-        MQTT(const MQTT &) = delete;
-        MQTT &operator=(const MQTT &) = delete;
-        MQTT(MQTT &&) = delete;
-        MQTT &operator=(const MQTT &&) = delete;
+        Parser(const Parser &) = delete;
+        Parser &operator=(const Parser &) = delete;
+        Parser(Parser &&) = delete;
+        Parser &operator=(const Parser &&) = delete;
     private:
         struct impl;
         std::unique_ptr<impl> pimpl;
