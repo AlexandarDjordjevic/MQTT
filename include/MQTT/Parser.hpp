@@ -11,28 +11,46 @@
 
 #pragma once
 #include <memory>
+#include <MQTT/Packet.hpp>
+#include <vector>
 
 namespace MQTT{
-class Parser{
-public:
-    /**
-     * @brief Construct a new Parser object
-     * 
-     */
-    Parser();
-    /**
-     * @brief Destroy the Parser object
-     * 
-     */
-    ~Parser();
+    class Parser{
+    public:
+        /**
+         * @brief Construct a new Parser object
+         * 
+         */
+        Parser();
+        /**
+         * @brief Destroy the Parser object
+         * 
+         */
+        ~Parser();
 
-    Parser(const Parser &) = delete;
-    Parser &operator=(const Parser &) = delete;
-    Parser(Parser &&) = delete;
-    Parser &operator=(const Parser &&) = delete;
-    
-private:
-    struct impl;
-    std::unique_ptr<impl> pimpl;
-};
+        Parser(const Parser &) = delete;
+        Parser &operator=(const Parser &) = delete;
+        Parser(Parser &&) = delete;
+        Parser &operator=(const Parser &&) = delete;
+        
+        /**
+         * @brief Parse MQTT message from buffer
+         * 
+         * @param buffer 
+         * @param len 
+         * @return Packet* 
+         */
+        static Packet* parse(const uint8_t* buffer, size_t len);
+
+        /**
+         * @brief Parse MQTT message from vector
+         * 
+         * @param buffer 
+         * @return Packet* 
+         */
+        static Packet* parse(const std::vector<uint8_t>& buffer);
+    private:
+        struct impl;
+        std::unique_ptr<impl> pimpl;
+    };
 }
