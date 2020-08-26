@@ -49,6 +49,10 @@ namespace MQTT{
          * @return Packet* 
          */
         static Packet* parse(const std::vector<uint8_t>& buffer);
+
+    private:
+        static std::string parseStringField(uint8_t* buffer);
+
     private:
         struct impl;
         std::unique_ptr<impl> pimpl;

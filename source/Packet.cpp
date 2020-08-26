@@ -12,6 +12,7 @@ namespace MQTT{
         bool dup;
         Packet::QOS qos;
         bool retain;
+        std::string protocolName;
     };
     
     /**
@@ -59,5 +60,13 @@ namespace MQTT{
 
     uint8_t Packet::getHeaderRemaingLength(){
         return pimpl->headerRemainingLength;
+    }
+
+    std::string Packet::getProtocolName(){
+        return pimpl->protocolName;
+    }
+
+    void Packet::setProtocolName(std::string protocolName){
+        pimpl->protocolName = protocolName;
     }
 } // namespace MQTT

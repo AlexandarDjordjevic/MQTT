@@ -97,6 +97,12 @@ namespace Packet
         0x75, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x74, 0x65, 0x73, 0x74, 0x20, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65
     };
 
+    const uint8_t PublishRetain[] = 
+    {
+        0x31, 0x20, 0x00, 0x14, 0x68, 0x6f, 0x6d, 0x65, 0x2f, 0x67, 0x61, 0x72, 0x64, 0x65, 0x6e, 0x2f, 0x66, 0x6f, 
+        0x75, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x54, 0x65, 0x73, 0x74, 0x20, 0x73, 0x68, 0x69, 0x74, 0x0a
+    };
+        
 
     const uint8_t PublishACK[] = 
     {
@@ -248,7 +254,17 @@ TEST(ParseFixedHeaderQOS, QOS2){
     ASSERT_EQ(message->getQOS(), MQTT::Packet::QOS::QOS2);
 }
 
+TEST(ParseFixedHeaderRetainFlag, Retain_TRUE){
+    auto message = MQTT::Parser::parse(Packet::PublishRetain, sizeof(Packet::PublishRetain));
+    ASSERT_TRUE(message->getRetain());
+}
 
-TEST(ParseVariableHeader, test1){
-    ASSERT_TRUE(true);
+TEST(ParseFixedHeaderRetainFlag, Retain_FALSE){
+    auto message = MQTT::Parser::parse(Packet::SubscribeRequstQOS2, sizeof(Packet::SubscribeRequstQOS2));
+    ASSERT_FALSE(message->getRetain());
+}
+
+TEST(ParseVariableHeader, CONNECT_ProtocolName){
+    auto message = MQTT::Parser::parse(Packet::Connect, sizeof(Packet::Connect));
+    ASSERT_EQ(message->getProtocolName(), "MQTT");
 }

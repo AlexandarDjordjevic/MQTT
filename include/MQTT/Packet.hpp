@@ -69,18 +69,76 @@ namespace MQTT{
          */
         void setControlType(ControlType ct);
 
+        /**
+         * @brief Get the Dup Flag
+         * 
+         * @return true 
+         * @return false 
+         */
         bool getDupFlag();
+
+        /**
+         * @brief Set the Dup Flag
+         * 
+         * @param dup 
+         */
         void setDupFlag(bool dup);
 
+        /**
+         * @brief Get QOS
+         * 
+         * @return QOS 
+         */
         QOS getQOS();
+        /**
+         * @brief Set QOS
+         * 
+         * @param qos 
+         */
         void setQOS(QOS qos);
 
+        /**
+         * @brief Get the Retain
+         * 
+         * @return true 
+         * @return false 
+         */
         bool getRetain();
+        /**
+         * @brief Set the Retain
+         * 
+         * @param retain 
+         */
         void setRetain(bool retain);
 
+        /**
+         * @brief Get the Header Remaing Length
+         * 
+         * @return uint8_t 
+         */
         uint8_t getHeaderRemaingLength();
 
+        /**
+         * @brief Set the Header Remaing Length
+         * 
+         * @param len 
+         */
         void setHeaderRemaingLength(uint8_t len);
+
+        /**
+         * @brief Get the Protocol Name
+         * 
+         * @return std::string 
+         */
+        std::string getProtocolName();
+
+        /**
+         * @brief Set the Protocol Name
+         * 
+         * @param protocolName 
+         */
+        void setProtocolName(std::string protocolName);
+
     private:
         struct impl;
         std::unique_ptr<impl> pimpl;
