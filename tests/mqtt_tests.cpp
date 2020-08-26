@@ -20,22 +20,10 @@ Byte 2
 (At least one byte) contains the Remaining Length field. -----> Depends on Packet type!
 */
 
-class testControlPacketConnect: public ::testing::Test { 
-public: 
-   testControlPacketConnect( ) { 
-
-   } 
-
-   void SetUp( ) { 
-   }
-
-   void TearDown( ) { 
-   }
-
-   ~testControlPacketConnect( )  { 
-   }
-
-   const uint8_t raw_buffer[18] = {
+namespace Packet
+{
+    const uint8_t Connect[] = 
+    {
         //CONNECT fixed header
         0x10, //Control type 1 - Connect
         0x10, // Remaining length 
@@ -60,10 +48,69 @@ public:
         'E',
         'S',
         'T'
-        };
-};
+    };
 
-TEST_F(testControlPacketConnect, Parse_Header_Packet_Type){
-    auto message = MQTT::Parser::parse(raw_buffer, sizeof(raw_buffer));
+    const uint8_t ConnACK[] = 
+    {
+        0x20,  0x02, 0x00, 0x00
+    };
+
+    const uint8_t PingRequest[] = 
+    {
+        0xC0, 00
+    };
+
+    const uint8_t PingResponse[] = 
+    {
+        0xd0, 00
+    };
+
+    const uint8_t SubscribeRequst[] = 
+    {
+        0x82, 0x11, 0x00, 0x01, 0x00, 0x0c, 0x68, 0x6f, 0x6d, 0x65, 0x2f, 0x6b, 0x69, 0x74, 0x63, 0x68, 0x65, 0x6e, 0x00
+    };
+
+    const uint8_t SubscribeACK[] = 
+    {
+        0x90, 0x03, 0x00, 0x01, 0x00
+    };
+      
+} // namespace Packet
+
+
+
+TEST(ParseFixedHeader, CONNECT){
+    auto message = MQTT::Parser::parse(Packet::Connect, sizeof(Packet::Connect));
     ASSERT_EQ(message->getControlType(), MQTT::Packet::ControlType::CONNECT);
+    ASSERT_EQ(message->getHeaderRemaingLength(), Packet::Connect[1]);
+}
+
+TEST(ParseFixedHeader, CONNACK){
+    auto message = MQTT::Parser::parse(Packet::ConnACK, sizeof(Packet::ConnACK));
+    ASSERT_EQ(message->getControlType(), MQTT::Packet::ControlType::CONNACK);
+    ASSERT_EQ(message->getHeaderRemaingLength(), Packet::ConnACK[1]);
+}
+
+TEST(ParseFixedHeader, PINGREQ){
+    auto message = MQTT::Parser::parse(Packet::PingRequest, sizeof(Packet::PingRequest));
+    ASSERT_EQ(message->getControlType(), MQTT::Packet::ControlType::PINGREQ);
+    ASSERT_EQ(message->getHeaderRemaingLength(), Packet::PingRequest[1]);
+}
+
+TEST(ParseFixedHeader, PINGRESP){
+    auto message = MQTT::Parser::parse(Packet::PingResponse, sizeof(Packet::PingResponse));
+    ASSERT_EQ(message->getControlType(), MQTT::Packet::ControlType::PINGRESP);
+    ASSERT_EQ(message->getHeaderRemaingLength(), Packet::PingResponse[1]);
+}
+
+TEST(ParseFixedHeader, SUBSCRIBE){
+    auto message = MQTT::Parser::parse(Packet::SubscribeRequst, sizeof(Packet::SubscribeRequst));
+    ASSERT_EQ(message->getControlType(), MQTT::Packet::ControlType::SUBSCRIBE);
+    ASSERT_EQ(message->getHeaderRemaingLength(), Packet::SubscribeRequst[1]);
+}
+
+TEST(ParseFixedHeader, SUBACK){
+    auto message = MQTT::Parser::parse(Packet::SubscribeACK, sizeof(Packet::SubscribeACK));
+    ASSERT_EQ(message->getControlType(), MQTT::Packet::ControlType::SUBACK);
+    ASSERT_EQ(message->getHeaderRemaingLength(), Packet::SubscribeACK[1]);
 }

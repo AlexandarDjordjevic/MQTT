@@ -15,7 +15,6 @@
 namespace MQTT{
     class Packet{
     public:
-        //Types
         enum ControlType{
             Reserved = 0,
             CONNECT,
@@ -64,6 +63,11 @@ namespace MQTT{
          * @param ct 
          */
         void setControlType(ControlType ct);
+
+
+        uint8_t getHeaderRemaingLength();
+
+        void setHeaderRemaingLength(uint8_t len);
     private:
         struct impl;
         std::unique_ptr<impl> pimpl;

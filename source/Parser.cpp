@@ -24,12 +24,12 @@ namespace MQTT{
     Packet* Parser::parse(const uint8_t* buffer, size_t len){
         Packet* packet = new Packet();
         packet->setControlType(MQTT::Packet::ControlType((buffer[0] & 0xf0) >> 4));
+        packet->setHeaderRemaingLength(buffer[1]);
         return packet;
     }
 
     Packet* Parser::parse(const std::vector<uint8_t>& buffer){
-        Packet* packet = new Packet();
-        packet->setControlType(MQTT::Packet::ControlType((buffer[0] & 0xf0) >> 4));
+        auto packet = parse((uint8_t*)buffer.data(), buffer.size());
         return packet;
     }
 } // namespace MQTT
