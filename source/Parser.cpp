@@ -24,6 +24,9 @@ namespace MQTT{
     Packet* Parser::parse(const uint8_t* buffer, size_t len){
         Packet* packet = new Packet();
         packet->setControlType(MQTT::Packet::ControlType((buffer[0] & 0xf0) >> 4));
+        packet->setDupFlag((buffer[0] & 0x08));
+        packet->setQOS(MQTT::Packet::QOS((buffer[0] & 0x06) >> 1));
+        packet->setRetain(buffer[0] & 0x01);
         packet->setHeaderRemaingLength(buffer[1]);
         return packet;
     }

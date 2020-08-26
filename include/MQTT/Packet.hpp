@@ -33,6 +33,11 @@ namespace MQTT{
             DISCONNECT
         };
 
+        enum QOS{
+            QOS0,
+            QOS1,
+            QOS2
+        };
         /**
          * @brief Construct a new Packet object
          * 
@@ -64,6 +69,14 @@ namespace MQTT{
          */
         void setControlType(ControlType ct);
 
+        bool getDupFlag();
+        void setDupFlag(bool dup);
+
+        QOS getQOS();
+        void setQOS(QOS qos);
+
+        bool getRetain();
+        void setRetain(bool retain);
 
         uint8_t getHeaderRemaingLength();
 

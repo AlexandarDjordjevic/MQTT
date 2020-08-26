@@ -65,9 +65,19 @@ namespace Packet
         0xd0, 00
     };
 
-    const uint8_t SubscribeRequst[] = 
+    const uint8_t SubscribeRequstQOS0[] = 
+    {
+        0x80, 0x11, 0x00, 0x01, 0x00, 0x0c, 0x68, 0x6f, 0x6d, 0x65, 0x2f, 0x6b, 0x69, 0x74, 0x63, 0x68, 0x65, 0x6e, 0x00
+    };
+
+    const uint8_t SubscribeRequstQOS1[] = 
     {
         0x82, 0x11, 0x00, 0x01, 0x00, 0x0c, 0x68, 0x6f, 0x6d, 0x65, 0x2f, 0x6b, 0x69, 0x74, 0x63, 0x68, 0x65, 0x6e, 0x00
+    };
+
+    const uint8_t SubscribeRequstQOS2[] = 
+    {
+        0x84, 0x11, 0x00, 0x01, 0x00, 0x0c, 0x68, 0x6f, 0x6d, 0x65, 0x2f, 0x6b, 0x69, 0x74, 0x63, 0x68, 0x65, 0x6e, 0x00
     };
 
     const uint8_t SubscribeACK[] = 
@@ -80,6 +90,13 @@ namespace Packet
         0x30, 0x22, 0x00, 0x14, 0x68, 0x6f, 0x6d, 0x65, 0x2f, 0x67, 0x61, 0x72, 0x64, 0x65, 0x6e, 0x2f, 0x66, 0x6f, 
         0x75, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x74, 0x65, 0x73, 0x74, 0x20, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65
     };
+
+    const uint8_t PublishDuplicate[] = 
+    {
+        0x38, 0x22, 0x00, 0x14, 0x68, 0x6f, 0x6d, 0x65, 0x2f, 0x67, 0x61, 0x72, 0x64, 0x65, 0x6e, 0x2f, 0x66, 0x6f, 
+        0x75, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x74, 0x65, 0x73, 0x74, 0x20, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65
+    };
+
 
     const uint8_t PublishACK[] = 
     {
@@ -122,87 +139,116 @@ namespace Packet
 
 
 
-TEST(ParseFixedHeader, CONNECT){
+TEST(ParseFixedHeaderControlType, CONNECT){
     auto message = MQTT::Parser::parse(Packet::Connect, sizeof(Packet::Connect));
     ASSERT_EQ(message->getControlType(), MQTT::Packet::ControlType::CONNECT);
     ASSERT_EQ(message->getHeaderRemaingLength(), Packet::Connect[1]);
 }
 
-TEST(ParseFixedHeader, CONNACK){
+TEST(ParseFixedHeaderControlType, CONNACK){
     auto message = MQTT::Parser::parse(Packet::ConnACK, sizeof(Packet::ConnACK));
     ASSERT_EQ(message->getControlType(), MQTT::Packet::ControlType::CONNACK);
     ASSERT_EQ(message->getHeaderRemaingLength(), Packet::ConnACK[1]);
 }
 
-TEST(ParseFixedHeader, PINGREQ){
+TEST(ParseFixedHeaderControlType, PINGREQ){
     auto message = MQTT::Parser::parse(Packet::PingRequest, sizeof(Packet::PingRequest));
     ASSERT_EQ(message->getControlType(), MQTT::Packet::ControlType::PINGREQ);
     ASSERT_EQ(message->getHeaderRemaingLength(), Packet::PingRequest[1]);
 }
 
-TEST(ParseFixedHeader, PINGRESP){
+TEST(ParseFixedHeaderControlType, PINGRESP){
     auto message = MQTT::Parser::parse(Packet::PingResponse, sizeof(Packet::PingResponse));
     ASSERT_EQ(message->getControlType(), MQTT::Packet::ControlType::PINGRESP);
     ASSERT_EQ(message->getHeaderRemaingLength(), Packet::PingResponse[1]);
 }
 
-TEST(ParseFixedHeader, SUBSCRIBE){
-    auto message = MQTT::Parser::parse(Packet::SubscribeRequst, sizeof(Packet::SubscribeRequst));
+TEST(ParseFixedHeaderControlType, SUBSCRIBE){
+    auto message = MQTT::Parser::parse(Packet::SubscribeRequstQOS0, sizeof(Packet::SubscribeRequstQOS0));
     ASSERT_EQ(message->getControlType(), MQTT::Packet::ControlType::SUBSCRIBE);
-    ASSERT_EQ(message->getHeaderRemaingLength(), Packet::SubscribeRequst[1]);
+    ASSERT_EQ(message->getHeaderRemaingLength(), Packet::SubscribeRequstQOS0[1]);
 }
 
-TEST(ParseFixedHeader, SUBACK){
+TEST(ParseFixedHeaderControlType, SUBACK){
     auto message = MQTT::Parser::parse(Packet::SubscribeACK, sizeof(Packet::SubscribeACK));
     ASSERT_EQ(message->getControlType(), MQTT::Packet::ControlType::SUBACK);
     ASSERT_EQ(message->getHeaderRemaingLength(), Packet::SubscribeACK[1]);
 }
 
-TEST(ParseFixedHeader, PUBLISH){
+TEST(ParseFixedHeaderControlType, PUBLISH){
     auto message = MQTT::Parser::parse(Packet::Publish, sizeof(Packet::Publish));
     ASSERT_EQ(message->getControlType(), MQTT::Packet::ControlType::PUBLISH);
     ASSERT_EQ(message->getHeaderRemaingLength(), Packet::Publish[1]);
 }
 
-TEST(ParseFixedHeader, PUBLISHACK){
+TEST(ParseFixedHeaderControlType, PUBLISHACK){
     auto message = MQTT::Parser::parse(Packet::PublishACK, sizeof(Packet::PublishACK));
     ASSERT_EQ(message->getControlType(), MQTT::Packet::ControlType::PUBACK);
     ASSERT_EQ(message->getHeaderRemaingLength(), Packet::PublishACK[1]);
 }
 
-TEST(ParseFixedHeader, PUBLISRCV){
+TEST(ParseFixedHeaderControlType, PUBLISRCV){
     auto message = MQTT::Parser::parse(Packet::PublishRecv, sizeof(Packet::PublishRecv));
     ASSERT_EQ(message->getControlType(), MQTT::Packet::ControlType::PUBREC);
     ASSERT_EQ(message->getHeaderRemaingLength(), Packet::PublishRecv[1]);
 }
 
-TEST(ParseFixedHeader, PUBLISHRELEASE){
+TEST(ParseFixedHeaderControlType, PUBLISHRELEASE){
     auto message = MQTT::Parser::parse(Packet::PublishRelease, sizeof(Packet::PublishRelease));
     ASSERT_EQ(message->getControlType(), MQTT::Packet::ControlType::PUBREL);
     ASSERT_EQ(message->getHeaderRemaingLength(), Packet::PublishRelease[1]);
 }
 
-TEST(ParseFixedHeader, PUBLISHCOMPLETE){
+TEST(ParseFixedHeaderControlType, PUBLISHCOMPLETE){
     auto message = MQTT::Parser::parse(Packet::PublishComplete, sizeof(Packet::PublishComplete));
     ASSERT_EQ(message->getControlType(), MQTT::Packet::ControlType::PUBCOMP);
     ASSERT_EQ(message->getHeaderRemaingLength(), Packet::PublishComplete[1]);
 }
 
-TEST(ParseFixedHeader, UNSUBSCRIBE){
+TEST(ParseFixedHeaderControlType, UNSUBSCRIBE){
     auto message = MQTT::Parser::parse(Packet::Unsubscribe, sizeof(Packet::Unsubscribe));
     ASSERT_EQ(message->getControlType(), MQTT::Packet::ControlType::UNSUBSCRIBE);
     ASSERT_EQ(message->getHeaderRemaingLength(), Packet::Unsubscribe[1]);
 }
 
-TEST(ParseFixedHeader, UNSUBSCIBEACK){
+TEST(ParseFixedHeaderControlType, UNSUBSCIBEACK){
     auto message = MQTT::Parser::parse(Packet::UnsubscribeACK, sizeof(Packet::UnsubscribeACK));
     ASSERT_EQ(message->getControlType(), MQTT::Packet::ControlType::UNSUBACK);
     ASSERT_EQ(message->getHeaderRemaingLength(), Packet::UnsubscribeACK[1]);
 }
 
-
-TEST(ParseFixedHeader, DISCONNECT){
+TEST(ParseFixedHeaderControlType, DISCONNECT){
     auto message = MQTT::Parser::parse(Packet::Disconnect, sizeof(Packet::Disconnect));
     ASSERT_EQ(message->getControlType(), MQTT::Packet::ControlType::DISCONNECT);
     ASSERT_EQ(message->getHeaderRemaingLength(), Packet::Disconnect[1]);
+}
+
+TEST(ParseFixedHeaderDuplicateFlag, DUP_FLAG_FALSE){
+    auto message = MQTT::Parser::parse(Packet::Publish, sizeof(Packet::Publish));
+    ASSERT_FALSE(message->getDupFlag());
+}
+
+TEST(ParseFixedHeaderDuplicateFlag, DUP_FLAG_TRUE){
+    auto message = MQTT::Parser::parse(Packet::Publish, sizeof(Packet::PublishDuplicate));
+    ASSERT_FALSE(message->getDupFlag());
+}
+
+TEST(ParseFixedHeaderQOS, QOS0){
+    auto message = MQTT::Parser::parse(Packet::Publish, sizeof(Packet::Publish));
+    ASSERT_EQ(message->getQOS(), MQTT::Packet::QOS::QOS0);
+}
+
+TEST(ParseFixedHeaderQOS, QOS1){
+    auto message = MQTT::Parser::parse(Packet::SubscribeRequstQOS1, sizeof(Packet::SubscribeRequstQOS1));
+    ASSERT_EQ(message->getQOS(), MQTT::Packet::QOS::QOS1);
+}
+
+TEST(ParseFixedHeaderQOS, QOS2){
+    auto message = MQTT::Parser::parse(Packet::SubscribeRequstQOS2, sizeof(Packet::SubscribeRequstQOS2));
+    ASSERT_EQ(message->getQOS(), MQTT::Packet::QOS::QOS2);
+}
+
+
+TEST(ParseVariableHeader, test1){
+    ASSERT_TRUE(true);
 }

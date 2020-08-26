@@ -9,6 +9,9 @@ namespace MQTT{
     {
         Packet::ControlType controlType;
         uint8_t headerRemainingLength;
+        bool dup;
+        Packet::QOS qos;
+        bool retain;
     };
     
     /**
@@ -27,6 +30,27 @@ namespace MQTT{
 
     void Packet::setControlType(Packet::ControlType controlType){
         pimpl->controlType = controlType;
+    }
+
+    bool Packet::getDupFlag(){
+        return pimpl->dup;
+    }
+    void Packet::setDupFlag(bool dup){
+        pimpl->dup = dup;
+    }
+
+    Packet::QOS Packet::getQOS(){
+        return pimpl->qos;
+    }
+    void Packet::setQOS(Packet::QOS qos){
+        pimpl->qos = qos;
+    }
+
+    bool Packet::getRetain(){
+        return pimpl->retain;
+    }
+    void Packet::setRetain(bool retain){
+        pimpl->retain = retain;
     }
 
     void Packet::setHeaderRemaingLength(uint8_t len){
