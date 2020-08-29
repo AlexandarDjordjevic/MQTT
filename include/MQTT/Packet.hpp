@@ -15,7 +15,6 @@
 
 namespace MQTT{
     class Packet
-        : public IVariableHeader
     {
     public:
         enum ControlType{
