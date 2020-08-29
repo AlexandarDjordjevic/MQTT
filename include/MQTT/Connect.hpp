@@ -15,6 +15,11 @@
 
 namespace MQTT
 {
+    enum class ProtocolVersion : uint8_t
+    {
+        MQTT_3_1 = 0x03,
+        MQTT_3_1_1 = 0x04
+    };
     class Connect
         : public IVariableHeader
     {
@@ -36,6 +41,33 @@ namespace MQTT
         Connect &operator=(const Connect &&) = delete;
 
         /**
+         * @brief Get the Protocol Name from variable header
+         * 
+         * @return std::string Protocol name
+         */
+        std::string getProtocolName();
+
+        /**
+         * @brief Set the Protocol Name object
+         * 
+         * @param protocolName 
+         */
+        void setProtocolName(std::string protocolName);
+
+        /**
+         * @brief Get the Protocol Level
+         * 
+         * @return ProtocolVersion 
+         */
+        ProtocolVersion getProtocolVersion();
+
+        /**
+         * @brief Set the Protocol Level
+         * 
+         */
+        void setProtocolLevel(ProtocolVersion);
+
+        /**
          * @brief Get the Clean Session object
          * 
          * @return true 
@@ -43,9 +75,7 @@ namespace MQTT
          */
         bool getCleanSession();
 
-        std::string getProtocolName();
 
-        void setProtocolName(std::string protocolName);
 
     private:
         struct impl;

@@ -9,6 +9,7 @@ namespace MQTT{
     {
         bool cleanSession;
         std::string protocolName;
+        ProtocolVersion protocolVersion;
     };
     
     /**
@@ -29,6 +30,14 @@ namespace MQTT{
 
     void Connect::setProtocolName(std::string protocolName){
         pimpl->protocolName = protocolName;
+    }
+
+    ProtocolVersion Connect::getProtocolVersion(){
+        return pimpl->protocolVersion;
+    }
+
+    void Connect::setProtocolLevel(ProtocolVersion level){
+        pimpl->protocolVersion = level;
     }
 
     bool Connect::getCleanSession(){

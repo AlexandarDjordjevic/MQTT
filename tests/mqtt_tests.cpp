@@ -66,8 +66,8 @@ namespace Packet
         'S',
         'D',
         'P',
-        //Protocol level
-        0x04,
+        //Protocol Version
+        0x03,
         //CONNECT Flags
         0x02,
         //Keep alive 
@@ -179,133 +179,170 @@ namespace Packet
 
 TEST(ParseFixedHeaderControlType, CONNECT){
     auto packet = MQTT::Parser::parse(Packet::Connect, sizeof(Packet::Connect));
+    ASSERT_TRUE(packet->isValid());
     ASSERT_EQ(packet->getControlType(), MQTT::Packet::ControlType::CONNECT);
     ASSERT_EQ(packet->getHeaderRemaingLength(), Packet::Connect[1]);
 }
 
 TEST(ParseFixedHeaderControlType, CONNACK){
     auto packet = MQTT::Parser::parse(Packet::ConnACK, sizeof(Packet::ConnACK));
+    ASSERT_TRUE(packet->isValid());
     ASSERT_EQ(packet->getControlType(), MQTT::Packet::ControlType::CONNACK);
     ASSERT_EQ(packet->getHeaderRemaingLength(), Packet::ConnACK[1]);
 }
 
 TEST(ParseFixedHeaderControlType, PINGREQ){
     auto packet = MQTT::Parser::parse(Packet::PingRequest, sizeof(Packet::PingRequest));
+    ASSERT_TRUE(packet->isValid());
     ASSERT_EQ(packet->getControlType(), MQTT::Packet::ControlType::PINGREQ);
     ASSERT_EQ(packet->getHeaderRemaingLength(), Packet::PingRequest[1]);
 }
 
 TEST(ParseFixedHeaderControlType, PINGRESP){
     auto packet = MQTT::Parser::parse(Packet::PingResponse, sizeof(Packet::PingResponse));
+    ASSERT_TRUE(packet->isValid());
     ASSERT_EQ(packet->getControlType(), MQTT::Packet::ControlType::PINGRESP);
     ASSERT_EQ(packet->getHeaderRemaingLength(), Packet::PingResponse[1]);
 }
 
 TEST(ParseFixedHeaderControlType, SUBSCRIBE){
     auto packet = MQTT::Parser::parse(Packet::SubscribeRequstQOS0, sizeof(Packet::SubscribeRequstQOS0));
+    ASSERT_TRUE(packet->isValid());
     ASSERT_EQ(packet->getControlType(), MQTT::Packet::ControlType::SUBSCRIBE);
     ASSERT_EQ(packet->getHeaderRemaingLength(), Packet::SubscribeRequstQOS0[1]);
 }
 
 TEST(ParseFixedHeaderControlType, SUBACK){
     auto packet = MQTT::Parser::parse(Packet::SubscribeACK, sizeof(Packet::SubscribeACK));
+    ASSERT_TRUE(packet->isValid());
     ASSERT_EQ(packet->getControlType(), MQTT::Packet::ControlType::SUBACK);
     ASSERT_EQ(packet->getHeaderRemaingLength(), Packet::SubscribeACK[1]);
 }
 
 TEST(ParseFixedHeaderControlType, PUBLISH){
     auto packet = MQTT::Parser::parse(Packet::Publish, sizeof(Packet::Publish));
+    ASSERT_TRUE(packet->isValid());
     ASSERT_EQ(packet->getControlType(), MQTT::Packet::ControlType::PUBLISH);
     ASSERT_EQ(packet->getHeaderRemaingLength(), Packet::Publish[1]);
 }
 
 TEST(ParseFixedHeaderControlType, PUBLISHACK){
     auto packet = MQTT::Parser::parse(Packet::PublishACK, sizeof(Packet::PublishACK));
+    ASSERT_TRUE(packet->isValid());
     ASSERT_EQ(packet->getControlType(), MQTT::Packet::ControlType::PUBACK);
     ASSERT_EQ(packet->getHeaderRemaingLength(), Packet::PublishACK[1]);
 }
 
 TEST(ParseFixedHeaderControlType, PUBLISRCV){
     auto packet = MQTT::Parser::parse(Packet::PublishRecv, sizeof(Packet::PublishRecv));
+    ASSERT_TRUE(packet->isValid());
     ASSERT_EQ(packet->getControlType(), MQTT::Packet::ControlType::PUBREC);
     ASSERT_EQ(packet->getHeaderRemaingLength(), Packet::PublishRecv[1]);
 }
 
 TEST(ParseFixedHeaderControlType, PUBLISHRELEASE){
     auto packet = MQTT::Parser::parse(Packet::PublishRelease, sizeof(Packet::PublishRelease));
+    ASSERT_TRUE(packet->isValid());
     ASSERT_EQ(packet->getControlType(), MQTT::Packet::ControlType::PUBREL);
     ASSERT_EQ(packet->getHeaderRemaingLength(), Packet::PublishRelease[1]);
 }
 
 TEST(ParseFixedHeaderControlType, PUBLISHCOMPLETE){
     auto packet = MQTT::Parser::parse(Packet::PublishComplete, sizeof(Packet::PublishComplete));
+    ASSERT_TRUE(packet->isValid());
     ASSERT_EQ(packet->getControlType(), MQTT::Packet::ControlType::PUBCOMP);
     ASSERT_EQ(packet->getHeaderRemaingLength(), Packet::PublishComplete[1]);
 }
 
 TEST(ParseFixedHeaderControlType, UNSUBSCRIBE){
     auto packet = MQTT::Parser::parse(Packet::Unsubscribe, sizeof(Packet::Unsubscribe));
+    ASSERT_TRUE(packet->isValid());
     ASSERT_EQ(packet->getControlType(), MQTT::Packet::ControlType::UNSUBSCRIBE);
     ASSERT_EQ(packet->getHeaderRemaingLength(), Packet::Unsubscribe[1]);
 }
 
 TEST(ParseFixedHeaderControlType, UNSUBSCIBEACK){
     auto packet = MQTT::Parser::parse(Packet::UnsubscribeACK, sizeof(Packet::UnsubscribeACK));
+    ASSERT_TRUE(packet->isValid());
     ASSERT_EQ(packet->getControlType(), MQTT::Packet::ControlType::UNSUBACK);
     ASSERT_EQ(packet->getHeaderRemaingLength(), Packet::UnsubscribeACK[1]);
 }
 
 TEST(ParseFixedHeaderControlType, DISCONNECT){
     auto packet = MQTT::Parser::parse(Packet::Disconnect, sizeof(Packet::Disconnect));
+    ASSERT_TRUE(packet->isValid());
     ASSERT_EQ(packet->getControlType(), MQTT::Packet::ControlType::DISCONNECT);
     ASSERT_EQ(packet->getHeaderRemaingLength(), Packet::Disconnect[1]);
 }
 
 TEST(ParseFixedHeaderDuplicateFlag, DUP_FLAG_FALSE){
     auto packet = MQTT::Parser::parse(Packet::Publish, sizeof(Packet::Publish));
+    ASSERT_TRUE(packet->isValid());
     ASSERT_FALSE(packet->getDupFlag());
 }
 
 TEST(ParseFixedHeaderDuplicateFlag, DUP_FLAG_TRUE){
     auto packet = MQTT::Parser::parse(Packet::Publish, sizeof(Packet::PublishDuplicate));
+    ASSERT_TRUE(packet->isValid());
     ASSERT_FALSE(packet->getDupFlag());
 }
 
 TEST(ParseFixedHeaderQOS, QOS0){
     auto packet = MQTT::Parser::parse(Packet::Publish, sizeof(Packet::Publish));
+    ASSERT_TRUE(packet->isValid());
     ASSERT_EQ(packet->getQOS(), MQTT::Packet::QOS::QOS0);
 }
 
 TEST(ParseFixedHeaderQOS, QOS1){
     auto packet = MQTT::Parser::parse(Packet::SubscribeRequstQOS1, sizeof(Packet::SubscribeRequstQOS1));
+    ASSERT_TRUE(packet->isValid());
     ASSERT_EQ(packet->getQOS(), MQTT::Packet::QOS::QOS1);
 }
 
 TEST(ParseFixedHeaderQOS, QOS2){
     auto packet = MQTT::Parser::parse(Packet::SubscribeRequstQOS2, sizeof(Packet::SubscribeRequstQOS2));
+    ASSERT_TRUE(packet->isValid());
     ASSERT_EQ(packet->getQOS(), MQTT::Packet::QOS::QOS2);
 }
 
 TEST(ParseFixedHeaderRetainFlag, Retain_TRUE){
     auto packet = MQTT::Parser::parse(Packet::PublishRetain, sizeof(Packet::PublishRetain));
+    ASSERT_TRUE(packet->isValid());
     ASSERT_TRUE(packet->getRetain());
 }
 
 TEST(ParseFixedHeaderRetainFlag, Retain_FALSE){
     auto packet = MQTT::Parser::parse(Packet::SubscribeRequstQOS2, sizeof(Packet::SubscribeRequstQOS2));
+    ASSERT_TRUE(packet->isValid());
     ASSERT_FALSE(packet->getRetain());
 }
 
 TEST(ParseVariableHeader, CONNECT_ProtocolName_MQTT3_1_1){
     auto packet = MQTT::Parser::parse(Packet::Connect, sizeof(Packet::Connect));
+    ASSERT_TRUE(packet->isValid());
     auto header = packet->getVariableHeader();
     ASSERT_EQ(std::dynamic_pointer_cast<MQTT::Connect>(header)->getProtocolName(), "MQTT");
 }
 
 TEST(ParseVariableHeader, CONNECT_ProtocolName_MQTT3_1){
     auto packet = MQTT::Parser::parse(Packet::Connect_V3_1, sizeof(Packet::Connect_V3_1));
+    ASSERT_TRUE(packet->isValid());
     auto header = packet->getVariableHeader();
     ASSERT_EQ(std::dynamic_pointer_cast<MQTT::Connect>(header)->getProtocolName(), "MQISDP");
+}
+
+TEST(ParseVariableHeader, CONNECT_ProtocolVersion_MQTT3_1){
+    auto packet = MQTT::Parser::parse(Packet::Connect_V3_1, sizeof(Packet::Connect_V3_1));
+    ASSERT_TRUE(packet->isValid());
+    auto header = packet->getVariableHeader();
+    ASSERT_EQ(std::dynamic_pointer_cast<MQTT::Connect>(header)->getProtocolVersion(), MQTT::ProtocolVersion::MQTT_3_1);
+}
+
+TEST(ParseVariableHeader, CONNECT_ProtocolVersion_MQTT3_1_1){
+    auto packet = MQTT::Parser::parse(Packet::Connect, sizeof(Packet::Connect));
+    ASSERT_TRUE(packet->isValid());
+    auto header = packet->getVariableHeader();
+    ASSERT_EQ(std::dynamic_pointer_cast<MQTT::Connect>(header)->getProtocolVersion(), MQTT::ProtocolVersion::MQTT_3_1_1);
 }
 
 /**
@@ -320,5 +357,19 @@ TEST(ParseInvalidPackets, InvalidFixedHeaderLen){
 TEST(ParseInvalidPackets,InvalidLength){
     std::vector<uint8_t> invalidPacket = {0x80, 0x11, 0x00, 0x01, 0x00, 0x0c, 0x68, 0x6f, 0x6d, 0x65, 0x2f, 0x6b, 0x69, 0x74, 0x63, 0x68, 0x65, 0x6e};
     auto packet = MQTT::Parser::parse(invalidPacket);
+    ASSERT_FALSE(packet->isValid());
+}
+
+TEST(ParseInvalidPackets,InvalidComboNameVersion){
+    std::vector<uint8_t> invalidPacketMQISDP = {
+        0x10, 0x12, 0x00, 0x06, 'M', 'Q', 'I', 'S', 'D', 'P', 0x04, 0x02, 0x0, 0x3c, 0x0, 0x04, 'T', 'E', 'S', 'T'
+    };
+    auto packet = MQTT::Parser::parse(invalidPacketMQISDP);
+    ASSERT_FALSE(packet->isValid());
+
+    std::vector<uint8_t> invalidPacketMQTT = {
+        0x10, 0x10, 0x00, 0x04, 'M', 'Q', 'T', 'T', 0x03, 0x02, 0x0, 0x3c, 0x0, 0x04, 'T', 'E', 'S', 'T'
+    };
+    packet = MQTT::Parser::parse(invalidPacketMQTT);
     ASSERT_FALSE(packet->isValid());
 }

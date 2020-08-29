@@ -141,7 +141,17 @@ namespace MQTT{
          */
         void parseHeaderReminingLen(uint8_t len);
 
+        /**
+         * @brief Get the Variable Header object
+         * 
+         * @return std::shared_ptr<IVariableHeader> 
+         */
         std::shared_ptr<IVariableHeader> getVariableHeader();
+
+        /**
+         * @brief Parse vairable header from buffer
+         * 
+         */
         void parseVariableHead(uint8_t*, size_t);
 
         /**

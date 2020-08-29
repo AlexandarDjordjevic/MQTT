@@ -25,7 +25,7 @@ namespace MQTT{
     Packet::Packet()
         : pimpl(new Packet::impl())
     {
-
+        pimpl->valid = true;
     }
 
     Packet::~Packet(){
@@ -91,9 +91,25 @@ namespace MQTT{
         switch (getControlType())
         {
         case Packet::ControlType::CONNECT:
-            pimpl->variableHeader = std::make_shared<Connect>();
-            std::dynamic_pointer_cast<Connect>(pimpl->variableHeader)->setProtocolName(parseStringField(data));
-            
+            {
+                pimpl->variableHeader = std::make_shared<Connect>();
+                auto varHeader = std::dynamic_pointer_cast<Connect>(pimpl->variableHeader);
+                auto name = parseStringField(data);
+                varHeader->setProtocolName(name);
+                varHeader->setProtocolLevel(ProtocolVersion(data[name.length() + 2]));
+                if (name == "MQTT") {
+                    if (varHeader->getProtocolVersion() != ProtocolVersion::MQTT_3_1_1){
+                        pimpl->valid = false;                        
+                    }
+                }else if (name == "MQISDP"){
+                    if (varHeader->getProtocolVersion() != ProtocolVersion::MQTT_3_1){
+                        pimpl->valid = false;                        
+                    }
+                }else{
+                    //Invalid packet
+                    pimpl->valid = false; 
+                }
+            }
             break;
         
         default:
