@@ -40,7 +40,7 @@ namespace MQTT{
          * @param len 
          * @return Packet* 
          */
-        static Packet* parse(const uint8_t* buffer, size_t len);
+        static std::shared_ptr<Packet> parse(const uint8_t* buffer, size_t len);
 
         /**
          * @brief Parse MQTT message from vector
@@ -48,7 +48,7 @@ namespace MQTT{
          * @param buffer 
          * @return Packet* 
          */
-        static Packet* parse(const std::vector<uint8_t>& buffer);
+        static std::shared_ptr<Packet> parse(const std::vector<uint8_t>& buffer);
 
     private:
         static std::string parseStringField(uint8_t* buffer);

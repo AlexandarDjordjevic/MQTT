@@ -8,12 +8,15 @@
  * @copyright Copyright (c) 2020
  * 
  */
-#include <MQTT/Packet.hpp>
+#pragma once
+#include <memory>
+
+#include <MQTT/IVariableHeader.hpp>
 
 namespace MQTT
 {
-    class Connect 
-        : public Packet
+    class Connect
+        : public IVariableHeader
     {
     public:
         /**
@@ -39,6 +42,10 @@ namespace MQTT
          * @return false 
          */
         bool getCleanSession();
+
+        std::string getProtocolName();
+
+        void setProtocolName(std::string protocolName);
 
     private:
         struct impl;

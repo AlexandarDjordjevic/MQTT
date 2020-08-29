@@ -1,4 +1,5 @@
 #include <MQTT/Packet.hpp>
+#include <MQTT/Connect.hpp>
 #include <string.h>
 namespace MQTT{
     /**
@@ -13,6 +14,8 @@ namespace MQTT{
         Packet::QOS qos;
         bool retain;
         std::string protocolName;
+        std::shared_ptr<IVariableHeader> variableHeader;
+        bool valid;
     };
     
     /**
@@ -25,36 +28,48 @@ namespace MQTT{
 
     }
 
+    Packet::~Packet(){
+        
+    }
+    
+    bool Packet::isValid(){
+        return pimpl->valid;
+    }
+
+    void Packet::setInvalid(){
+        pimpl->valid = false;
+    }
+
     Packet::ControlType Packet::getControlType(){
         return pimpl->controlType;
     }
 
-    void Packet::setControlType(Packet::ControlType controlType){
+    void Packet::parseControlType(Packet::ControlType controlType){
         pimpl->controlType = controlType;
     }
 
     bool Packet::getDupFlag(){
         return pimpl->dup;
     }
-    void Packet::setDupFlag(bool dup){
+    void Packet::parseDupFlag(bool dup){
         pimpl->dup = dup;
     }
 
     Packet::QOS Packet::getQOS(){
         return pimpl->qos;
     }
-    void Packet::setQOS(Packet::QOS qos){
+    void Packet::parseQOS(Packet::QOS qos){
         pimpl->qos = qos;
     }
 
     bool Packet::getRetain(){
         return pimpl->retain;
     }
-    void Packet::setRetain(bool retain){
+    void Packet::parseRetain(bool retain){
         pimpl->retain = retain;
     }
 
-    void Packet::setHeaderRemaingLength(uint8_t len){
+    void Packet::parseHeaderReminingLen(uint8_t len){
         pimpl->headerRemainingLength = len;
     }
 
@@ -62,11 +77,29 @@ namespace MQTT{
         return pimpl->headerRemainingLength;
     }
 
-    std::string Packet::getProtocolName(){
-        return pimpl->protocolName;
+    std::shared_ptr<IVariableHeader> Packet::getVariableHeader(){
+        return pimpl->variableHeader;
     }
 
-    void Packet::setProtocolName(std::string protocolName){
-        pimpl->protocolName = protocolName;
+    std::string Packet::parseStringField(uint8_t* buffer){
+        return std::string((char*)&buffer[2], buffer[0] * 256 + buffer[1]);
     }
+
+
+    void Packet::parseVariableHead(uint8_t* data, size_t len){
+        if(len == 0) return;
+        switch (getControlType())
+        {
+        case Packet::ControlType::CONNECT:
+            pimpl->variableHeader = std::make_shared<Connect>();
+            std::dynamic_pointer_cast<Connect>(pimpl->variableHeader)->setProtocolName(parseStringField(data));
+            
+            break;
+        
+        default:
+            break;
+        }
+    }
+
+
 } // namespace MQTT

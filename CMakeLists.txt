@@ -5,6 +5,7 @@ set(this mqtt)
 set(CMAKE_CXX_STANDARD 11)
 
 set(include
+        include/MQTT/IVariableHeader.hpp
         include/MQTT/Parser.hpp
         include/MQTT/Packet.hpp
         include/MQTT/Connect.hpp

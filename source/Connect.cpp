@@ -8,6 +8,7 @@ namespace MQTT{
     struct Connect::impl
     {
         bool cleanSession;
+        std::string protocolName;
     };
     
     /**
@@ -20,6 +21,16 @@ namespace MQTT{
         pimpl->cleanSession = true;
     }
     
+    Connect::~Connect(){};
+
+    std::string Connect::getProtocolName(){
+        return pimpl->protocolName;
+    }
+
+    void Connect::setProtocolName(std::string protocolName){
+        pimpl->protocolName = protocolName;
+    }
+
     bool Connect::getCleanSession(){
         return pimpl->cleanSession;
     }

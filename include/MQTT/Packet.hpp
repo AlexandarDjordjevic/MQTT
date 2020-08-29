@@ -11,9 +11,12 @@
 #pragma once
 
 #include <memory>
+#include <MQTT/IVariableHeader.hpp>
 
 namespace MQTT{
-    class Packet{
+    class Packet
+        : public IVariableHeader
+    {
     public:
         enum ControlType{
             Reserved = 0,
@@ -56,6 +59,20 @@ namespace MQTT{
         Packet &operator=(const Packet &&) = delete;
 
         /**
+         * @brief Check if packet is valid
+         * 
+         * @return true 
+         * @return false 
+         */
+        bool isValid();
+
+        /**
+         * @brief Set the flag for invalid packet
+         * 
+         */
+        void setInvalid();
+
+        /**
          * @brief Get the packet control type
          * 
          * @return ControlType 
@@ -67,7 +84,7 @@ namespace MQTT{
          * 
          * @param ct 
          */
-        void setControlType(ControlType ct);
+        void parseControlType(ControlType ct);
 
         /**
          * @brief Get the Dup Flag
@@ -82,7 +99,7 @@ namespace MQTT{
          * 
          * @param dup 
          */
-        void setDupFlag(bool dup);
+        void parseDupFlag(bool dup);
 
         /**
          * @brief Get QOS
@@ -95,7 +112,7 @@ namespace MQTT{
          * 
          * @param qos 
          */
-        void setQOS(QOS qos);
+        void parseQOS(QOS qos);
 
         /**
          * @brief Get the Retain
@@ -109,7 +126,7 @@ namespace MQTT{
          * 
          * @param retain 
          */
-        void setRetain(bool retain);
+        void parseRetain(bool retain);
 
         /**
          * @brief Get the Header Remaing Length
@@ -123,7 +140,10 @@ namespace MQTT{
          * 
          * @param len 
          */
-        void setHeaderRemaingLength(uint8_t len);
+        void parseHeaderReminingLen(uint8_t len);
+
+        std::shared_ptr<IVariableHeader> getVariableHeader();
+        void parseVariableHead(uint8_t*, size_t);
 
         /**
          * @brief Get the Protocol Name
@@ -138,6 +158,9 @@ namespace MQTT{
          * @param protocolName 
          */
         void setProtocolName(std::string protocolName);
+
+    private:
+        std::string parseStringField(uint8_t* buffer);
 
     private:
         struct impl;
