@@ -99,15 +99,25 @@ namespace MQTT{
                 varHeader->setProtocolLevel(ProtocolVersion(data[name.length() + 2]));
                 if (name == "MQTT") {
                     if (varHeader->getProtocolVersion() != ProtocolVersion::MQTT_3_1_1){
-                        pimpl->valid = false;                        
+                        pimpl->valid = false;  
+                        return;                      
                     }
                 }else if (name == "MQISDP"){
                     if (varHeader->getProtocolVersion() != ProtocolVersion::MQTT_3_1){
-                        pimpl->valid = false;                        
+                        pimpl->valid = false;
+                        return;                        
                     }
                 }else{
                     //Invalid packet
-                    pimpl->valid = false; 
+                    pimpl->valid = false;
+                    return;
+                }
+                varHeader->setFlags(data[name.length() + 3]);
+                varHeader->setKeepAliveTimer(uint16_t(data[name.length() + 4] * 256 + data[name.length() + 5]));
+                size_t clientIdLen = data[name.length() + 6] * 256 + data[name.length() + 7];
+                if (varHeader->setClientIdentifier(std::string((char*)&data[name.length() + 8], clientIdLen)) == false){
+                    pimpl->valid = false;
+                    return;
                 }
             }
             break;

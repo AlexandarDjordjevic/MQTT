@@ -345,6 +345,150 @@ TEST(ParseVariableHeader, CONNECT_ProtocolVersion_MQTT3_1_1){
     ASSERT_EQ(std::dynamic_pointer_cast<MQTT::Connect>(header)->getProtocolVersion(), MQTT::ProtocolVersion::MQTT_3_1_1);
 }
 
+TEST(ParseVariableHeader, CONNECT_CleanSessionFlag){
+    uint8_t pack[sizeof(Packet::Connect)];
+    memcpy(pack, Packet::Connect, sizeof(Packet::Connect));
+    pack[9] = 0;
+    auto packet = MQTT::Parser::parse(pack, sizeof(Packet::Connect));
+    ASSERT_TRUE(packet->isValid());
+    auto header = packet->getVariableHeader();
+    ASSERT_FALSE(std::dynamic_pointer_cast<MQTT::Connect>(header)->getCleanSessionFlag());
+    pack[9] = 2;
+    packet = MQTT::Parser::parse(pack, sizeof(Packet::Connect));
+    ASSERT_TRUE(packet->isValid());
+    header = packet->getVariableHeader();
+    ASSERT_TRUE(std::dynamic_pointer_cast<MQTT::Connect>(header)->getCleanSessionFlag());
+}
+
+TEST(ParseVariableHeader, CONNECT_WillFlag){
+    uint8_t pack[sizeof(Packet::Connect)];
+    memcpy(pack, Packet::Connect, sizeof(Packet::Connect));
+    pack[9] = 0;
+    auto packet = MQTT::Parser::parse(pack, sizeof(Packet::Connect));
+    ASSERT_TRUE(packet->isValid());
+    auto header = packet->getVariableHeader();
+    ASSERT_FALSE(std::dynamic_pointer_cast<MQTT::Connect>(header)->getWillFlag());
+    pack[9] = 0x04;
+    packet = MQTT::Parser::parse(pack, sizeof(Packet::Connect));
+    ASSERT_TRUE(packet->isValid());
+    header = packet->getVariableHeader();
+    ASSERT_TRUE(std::dynamic_pointer_cast<MQTT::Connect>(header)->getWillFlag());
+}
+
+TEST(ParseVariableHeader, CONNECT_WillQOS){
+    uint8_t pack[sizeof(Packet::Connect)];
+    memcpy(pack, Packet::Connect, sizeof(Packet::Connect));
+    pack[9] = 0;
+    auto packet = MQTT::Parser::parse(pack, sizeof(Packet::Connect));
+    ASSERT_TRUE(packet->isValid());
+    auto header = packet->getVariableHeader();
+    ASSERT_EQ(std::dynamic_pointer_cast<MQTT::Connect>(header)->getWillQOS(), MQTT::QOS::QOS_0);
+
+    //QOS 1
+    pack[9] = 0x08;
+    packet = MQTT::Parser::parse(pack, sizeof(Packet::Connect));
+    ASSERT_TRUE(packet->isValid());
+    header = packet->getVariableHeader();
+    ASSERT_EQ(std::dynamic_pointer_cast<MQTT::Connect>(header)->getWillQOS(), MQTT::QOS::QOS_1);
+
+    //QOS 2
+    pack[9] = 0x10;
+    packet = MQTT::Parser::parse(pack, sizeof(Packet::Connect));
+    ASSERT_TRUE(packet->isValid());
+    header = packet->getVariableHeader();
+    ASSERT_EQ(std::dynamic_pointer_cast<MQTT::Connect>(header)->getWillQOS(), MQTT::QOS::QOS_2);
+}
+
+TEST(ParseVariableHeader, CONNECT_WillRetain){
+    uint8_t pack[sizeof(Packet::Connect)];
+    memcpy(pack, Packet::Connect, sizeof(Packet::Connect));
+    pack[9] = 0;
+    auto packet = MQTT::Parser::parse(pack, sizeof(Packet::Connect));
+    ASSERT_TRUE(packet->isValid());
+    auto header = packet->getVariableHeader();
+    ASSERT_FALSE(std::dynamic_pointer_cast<MQTT::Connect>(header)->getWillRetainFlag());
+    pack[9] = 0x20;
+    packet = MQTT::Parser::parse(pack, sizeof(Packet::Connect));
+    ASSERT_TRUE(packet->isValid());
+    header = packet->getVariableHeader();
+    ASSERT_TRUE(std::dynamic_pointer_cast<MQTT::Connect>(header)->getWillRetainFlag());
+}
+
+TEST(ParseVariableHeader, CONNECT_UsernameFlag){
+    uint8_t pack[sizeof(Packet::Connect)];
+    memcpy(pack, Packet::Connect, sizeof(Packet::Connect));
+    pack[9] = 0;
+    auto packet = MQTT::Parser::parse(pack, sizeof(Packet::Connect));
+    ASSERT_TRUE(packet->isValid());
+    auto header = packet->getVariableHeader();
+    ASSERT_FALSE(std::dynamic_pointer_cast<MQTT::Connect>(header)->getUsernameFlag());
+    pack[9] = 0x80;
+    packet = MQTT::Parser::parse(pack, sizeof(Packet::Connect));
+    ASSERT_TRUE(packet->isValid());
+    header = packet->getVariableHeader();
+    ASSERT_TRUE(std::dynamic_pointer_cast<MQTT::Connect>(header)->getUsernameFlag());
+}
+
+TEST(ParseVariableHeader, CONNECT_PasswordFlag){
+    uint8_t pack[sizeof(Packet::Connect)];
+    memcpy(pack, Packet::Connect, sizeof(Packet::Connect));
+    pack[9] = 0;
+    auto packet = MQTT::Parser::parse(pack, sizeof(Packet::Connect));
+    ASSERT_TRUE(packet->isValid());
+    auto header = packet->getVariableHeader();
+    ASSERT_FALSE(std::dynamic_pointer_cast<MQTT::Connect>(header)->getPasswordFlag());
+    pack[9] = 0x40;
+    packet = MQTT::Parser::parse(pack, sizeof(Packet::Connect));
+    ASSERT_TRUE(packet->isValid());
+    header = packet->getVariableHeader();
+    ASSERT_TRUE(std::dynamic_pointer_cast<MQTT::Connect>(header)->getPasswordFlag());
+}
+
+TEST(ParseVariableHeader, CONNECT_KeepAliveTimer){
+    uint8_t pack[sizeof(Packet::Connect)];
+    memcpy(pack, Packet::Connect, sizeof(Packet::Connect));
+    pack[10] = 0;
+    pack[11] = 0;
+    auto packet = MQTT::Parser::parse(pack, sizeof(Packet::Connect));
+    ASSERT_TRUE(packet->isValid());
+    auto header = packet->getVariableHeader();
+    auto keepaliveTimer = std::dynamic_pointer_cast<MQTT::Connect>(header)->getKeepAliveTimer();
+    ASSERT_EQ(keepaliveTimer, 0);
+
+    pack[10] = 0;
+    pack[11] = 1;
+    packet = MQTT::Parser::parse(pack, sizeof(Packet::Connect));
+    ASSERT_TRUE(packet->isValid());
+    header = packet->getVariableHeader();
+    keepaliveTimer = std::dynamic_pointer_cast<MQTT::Connect>(header)->getKeepAliveTimer();
+    ASSERT_EQ(keepaliveTimer, 1);
+
+    pack[10] = 1;
+    pack[11] = 0;
+    packet = MQTT::Parser::parse(pack, sizeof(Packet::Connect));
+    ASSERT_TRUE(packet->isValid());
+    header = packet->getVariableHeader();
+    keepaliveTimer = std::dynamic_pointer_cast<MQTT::Connect>(header)->getKeepAliveTimer();
+    ASSERT_EQ(keepaliveTimer, 256);
+
+    pack[10] = 0xff;
+    pack[11] = 0xff;
+    packet = MQTT::Parser::parse(pack, sizeof(Packet::Connect));
+    ASSERT_TRUE(packet->isValid());
+    header = packet->getVariableHeader();
+    keepaliveTimer = std::dynamic_pointer_cast<MQTT::Connect>(header)->getKeepAliveTimer();
+    ASSERT_EQ(keepaliveTimer, 0xffff);
+}
+
+TEST(ParseVariableHeader, CONNECT_ClientIdentifier){
+    auto packet = MQTT::Parser::parse(Packet::Connect, sizeof(Packet::Connect));
+    ASSERT_TRUE(packet->isValid());
+    auto header = packet->getVariableHeader();
+    auto clientIdentifier = std::dynamic_pointer_cast<MQTT::Connect>(header)->getClientIdentifier();
+    ASSERT_EQ(clientIdentifier, "TEST");
+}
+
+
 /**
  * Tests with invalid received packet
  */
