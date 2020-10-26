@@ -2,9 +2,12 @@ cmake_minimum_required(VERSION 3.8)
 
 set(this mqtt)
 
+project(${this})
+
 set(CMAKE_CXX_STANDARD 11)
 
 set(include
+        include/MQTT/FixedHeader.hpp
         include/MQTT/IVariableHeader.hpp
         include/MQTT/Parser.hpp
         include/MQTT/Packet.hpp
@@ -12,6 +15,7 @@ set(include
     )
 
 set(source
+        source/FixedHeader.cpp
         source/Parser.cpp
         source/Packet.cpp
         source/Connect.cpp

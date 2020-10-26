@@ -12,34 +12,13 @@
 
 #include <memory>
 #include <MQTT/IVariableHeader.hpp>
+#include <MQTT/FixedHeader.hpp>
 
 namespace MQTT{
     class Packet
     {
     public:
-        enum ControlType{
-            Reserved = 0,
-            CONNECT,
-            CONNACK,
-            PUBLISH,
-            PUBACK,
-            PUBREC,
-            PUBREL,
-            PUBCOMP,
-            SUBSCRIBE,
-            SUBACK,
-            UNSUBSCRIBE,
-            UNSUBACK,
-            PINGREQ,
-            PINGRESP,
-            DISCONNECT
-        };
 
-        enum QOS{
-            QOS0,
-            QOS1,
-            QOS2
-        };
         /**
          * @brief Construct a new Packet object
          * 
@@ -83,7 +62,7 @@ namespace MQTT{
          * 
          * @param ct 
          */
-        void parseControlType(ControlType ct);
+        void setControlType(ControlType ct);
 
         /**
          * @brief Get the Dup Flag
@@ -106,12 +85,6 @@ namespace MQTT{
          * @return QOS 
          */
         QOS getQOS();
-        /**
-         * @brief Set QOS
-         * 
-         * @param qos 
-         */
-        void parseQOS(QOS qos);
 
         /**
          * @brief Get the Retain
@@ -130,9 +103,9 @@ namespace MQTT{
         /**
          * @brief Get the Header Remaing Length
          * 
-         * @return uint8_t 
+         * @return size_t 
          */
-        uint8_t getHeaderRemaingLength();
+        size_t getHeaderRemaingLength();
 
         /**
          * @brief Set the Header Remaing Length
@@ -152,7 +125,15 @@ namespace MQTT{
          * @brief Parse vairable header from buffer
          * 
          */
-        void parseVariableHead(uint8_t*, size_t);
+        void parseVariableHeader(uint8_t*, size_t);
+
+        /**
+         * @brief Parse Fixed Header
+         * 
+         * @return true 
+         * @return false 
+         */
+        bool parseFixedHeader(const uint8_t* buffer);
 
         /**
          * @brief Get the Protocol Name

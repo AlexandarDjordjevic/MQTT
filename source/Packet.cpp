@@ -8,10 +8,9 @@ namespace MQTT{
      */
     struct Packet::impl
     {
-        Packet::ControlType controlType;
+        FixedHeader fixedHeader;
         uint8_t headerRemainingLength;
         bool dup;
-        Packet::QOS qos;
         bool retain;
         std::string protocolName;
         std::shared_ptr<IVariableHeader> variableHeader;
@@ -40,12 +39,8 @@ namespace MQTT{
         pimpl->valid = false;
     }
 
-    Packet::ControlType Packet::getControlType(){
-        return pimpl->controlType;
-    }
-
-    void Packet::parseControlType(Packet::ControlType controlType){
-        pimpl->controlType = controlType;
+    ControlType Packet::getControlType(){
+        return pimpl->fixedHeader.getControlType();
     }
 
     bool Packet::getDupFlag(){
@@ -55,16 +50,14 @@ namespace MQTT{
         pimpl->dup = dup;
     }
 
-    Packet::QOS Packet::getQOS(){
-        return pimpl->qos;
-    }
-    void Packet::parseQOS(Packet::QOS qos){
-        pimpl->qos = qos;
+    QOS Packet::getQOS(){
+        return pimpl->fixedHeader.getQOS();
     }
 
     bool Packet::getRetain(){
         return pimpl->retain;
     }
+
     void Packet::parseRetain(bool retain){
         pimpl->retain = retain;
     }
@@ -73,8 +66,8 @@ namespace MQTT{
         pimpl->headerRemainingLength = len;
     }
 
-    uint8_t Packet::getHeaderRemaingLength(){
-        return pimpl->headerRemainingLength;
+    size_t Packet::getHeaderRemaingLength(){
+        return pimpl->fixedHeader.getRemainingLength();
     }
 
     std::shared_ptr<IVariableHeader> Packet::getVariableHeader(){
@@ -86,45 +79,53 @@ namespace MQTT{
     }
 
 
-    void Packet::parseVariableHead(uint8_t* data, size_t len){
+    void Packet::parseVariableHeader(uint8_t* data, size_t len){
         if(len == 0) return;
         switch (getControlType())
         {
-        case Packet::ControlType::CONNECT:
-            {
-                pimpl->variableHeader = std::make_shared<Connect>();
-                auto varHeader = std::dynamic_pointer_cast<Connect>(pimpl->variableHeader);
-                auto name = parseStringField(data);
-                varHeader->setProtocolName(name);
-                varHeader->setProtocolLevel(ProtocolVersion(data[name.length() + 2]));
-                if (name == "MQTT") {
-                    if (varHeader->getProtocolVersion() != ProtocolVersion::MQTT_3_1_1){
-                        pimpl->valid = false;  
-                        return;                      
-                    }
-                }else if (name == "MQISDP"){
-                    if (varHeader->getProtocolVersion() != ProtocolVersion::MQTT_3_1){
+            case ControlType::CONNECT:
+                {
+                    pimpl->variableHeader = std::make_shared<Connect>();
+                    auto varHeader = std::dynamic_pointer_cast<Connect>(pimpl->variableHeader);
+                    auto name = parseStringField(data);
+                    varHeader->setProtocolName(name);
+                    varHeader->setProtocolLevel(ProtocolVersion(data[name.length() + 2]));
+                    if (name == "MQTT") {
+                        if (varHeader->getProtocolVersion() != ProtocolVersion::MQTT_3_1_1){
+                            pimpl->valid = false;  
+                            return;                      
+                        }
+                    }else if (name == "MQISDP"){
+                        if (varHeader->getProtocolVersion() != ProtocolVersion::MQTT_3_1){
+                            pimpl->valid = false;
+                            return;                        
+                        }
+                    }else{
+                        //Invalid packet
                         pimpl->valid = false;
-                        return;                        
+                        return;
                     }
-                }else{
-                    //Invalid packet
-                    pimpl->valid = false;
-                    return;
+                    varHeader->setFlags(data[name.length() + 3]);
+                    varHeader->setKeepAliveTimer(uint16_t(data[name.length() + 4] * 256 + data[name.length() + 5]));
+                    size_t clientIdLen = data[name.length() + 6] * 256 + data[name.length() + 7];
+                    if (varHeader->setClientIdentifier(std::string((char*)&data[name.length() + 8], clientIdLen)) == false){
+                        pimpl->valid = false;
+                        return;
+                    }
                 }
-                varHeader->setFlags(data[name.length() + 3]);
-                varHeader->setKeepAliveTimer(uint16_t(data[name.length() + 4] * 256 + data[name.length() + 5]));
-                size_t clientIdLen = data[name.length() + 6] * 256 + data[name.length() + 7];
-                if (varHeader->setClientIdentifier(std::string((char*)&data[name.length() + 8], clientIdLen)) == false){
-                    pimpl->valid = false;
-                    return;
-                }
-            }
-            break;
+                break;
         
         default:
             break;
         }
+    }
+    
+    bool Packet::parseFixedHeader(const uint8_t* buffer) 
+    {
+        pimpl->fixedHeader.setControlType(MQTT::ControlType((buffer[0] & 0xf0) >> 4));
+        pimpl->fixedHeader.setFlags(buffer[0] & 0x0f);
+        pimpl->fixedHeader.setRemainingLength(&buffer[1]);
+        return true;
     }
 
 

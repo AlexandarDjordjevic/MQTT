@@ -12,21 +12,11 @@
 #include <memory>
 
 #include <MQTT/IVariableHeader.hpp>
+#include <MQTT/FixedHeader.hpp>
 
 namespace MQTT
 {
-    enum class ProtocolVersion : uint8_t
-    {
-        MQTT_3_1 = 0x03,
-        MQTT_3_1_1 = 0x04
-    };
-
-    enum class QOS : uint8_t
-    {
-        QOS_0 = 0x00,
-        QOS_1 = 0x01,
-        QOS_2 = 0x02
-    };    
+  
     class Connect
         : public IVariableHeader
     {

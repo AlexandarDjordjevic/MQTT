@@ -29,18 +29,19 @@ namespace MQTT{
             return packet;
         }
 
-        packet->parseControlType(MQTT::Packet::ControlType((buffer[0] & 0xf0) >> 4));
-        packet->parseDupFlag((buffer[0] & 0x08));
-        packet->parseQOS(MQTT::Packet::QOS((buffer[0] & 0x06) >> 1));
-        packet->parseRetain(buffer[0] & 0x01);
-        packet->parseHeaderReminingLen(buffer[1]);
+        //packet-> setControlType(MQTT::ControlType((buffer[0] & 0xf0) >> 4));
+        // packet
+        // packet->parseDupFlag((buffer[0] & 0x08));
+        // packet->parseQOS(MQTT::QOS((buffer[0] & 0x06) >> 1));
+        // packet->parseRetain(buffer[0] & 0x01);
+        // packet->parseHeaderReminingLen(buffer[1]);
 
-        if (len != (packet->getHeaderRemaingLength() + 2)){
-            packet->setInvalid();
-            return packet;
-        }
-
-        packet->parseVariableHead((uint8_t*)&buffer[2], packet->getHeaderRemaingLength());
+        // if (len != (packet->getHeaderRemaingLength() + 2)){
+        //     packet->setInvalid();
+        //     return packet;
+        // }
+        packet->parseFixedHeader(buffer);
+        packet->parseVariableHeader((uint8_t*)&buffer[2], packet->getHeaderRemaingLength());
         return packet;
     }
 
